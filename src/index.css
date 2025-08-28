@@ -28,10 +28,11 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -56,6 +57,46 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* 모바일 디바이스 (320px - 767px) */
+@media (max-width: 767px) {
+  body {
+    min-width: 280px;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 2em;
+    line-height: 1.2;
+  }
+
+  button {
+    padding: 0.8em 1.4em;
+    font-size: 16px; /* 모바일에서 터치하기 좋은 크기 */
+  }
+}
+
+/* 태블릿 디바이스 (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  h1 {
+    font-size: 2.5em;
+  }
+
+  button {
+    padding: 0.7em 1.3em;
+  }
+}
+
+/* 데스크톱 디바이스 (1024px 이상) */
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 3.2em;
+  }
+
+  button {
+    padding: 0.6em 1.2em;
+  }
 }
 
 @media (prefers-color-scheme: light) {
