@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ROUTES } from "../routes/routes";
 
 const Routines = () => {
   return (
@@ -24,7 +25,7 @@ const Routines = () => {
         </div>
       </div>
       <Link
-        to="/"
+        to={ROUTES.HOME}
         className="inline-block px-6 py-3 md:px-8 md:py-4 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 text-center min-h-[44px] flex items-center justify-center mx-auto"
       >
         Back to Home
