@@ -16,6 +16,8 @@ export const en = {
     version: "Version",
     build: "Build",
     developer: "Developer",
+    switchToLight: "Switch to light mode",
+    switchToDark: "Switch to dark mode",
   },
   home: {
     greeting: "Good morning! 👋",
@@ -62,12 +64,13 @@ export const en = {
     },
     theme: {
       title: "Theme",
-      subtitle: "Customize the appearance",
+      subtitle: "Customize the appearance of your app",
       mode: "Theme Mode",
       light: "Light",
       dark: "Dark",
-      auto: "Auto (System)",
+      auto: "Auto",
       primaryColor: "Primary Color",
+      currentMode: "Current Mode",
     },
     language: {
       title: "Language",

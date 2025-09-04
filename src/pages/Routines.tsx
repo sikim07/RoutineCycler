@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../routes/routes";
-import { useLanguage } from "../contexts/LanguageContext";
+import { ROUTES } from "@/routes/routes";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/hooks/useTheme";
+import { SunIcon, MoonIcon, PlusIcon } from "@/components/icons";
 
 interface Routine {
   id: number;
@@ -14,6 +16,7 @@ interface Routine {
 
 const Routines = () => {
   const { t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
 
   const [routines, setRoutines] = useState<Routine[]>([
     {
@@ -103,27 +106,33 @@ const Routines = () => {
             </p>
           </div>
           <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-2xl transition-all duration-200 active:scale-95"
+            onClick={toggleTheme}
+            className="w-12 h-12 bg-white/20 dark:bg-black/20 hover:bg-white/30 dark:hover:bg-black/30 backdrop-blur-sm rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-95"
+            aria-label={
+              theme.isDark
+                ? t("common.switchToLight")
+                : t("common.switchToDark")
+            }
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
+            {theme.isDark ? (
+              <MoonIcon className="w-6 h-6 text-yellow-500" />
+            ) : (
+              <SunIcon className="w-6 h-6 text-gray-700" />
+            )}
           </button>
         </div>
       </div>
 
       <div className="px-6 -mt-4">
+        {/* 루틴 추가 버튼 */}
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-2xl transition-all duration-200 active:scale-95"
+          >
+            <PlusIcon className="w-6 h-6" />
+          </button>
+        </div>
         {/* 루틴 목록 */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 mb-6 transition-colors duration-200">
           <div className="p-6">

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useState } from "react";
 import type { ReactNode } from "react";
-import { en } from "../locales/en";
-import { ko } from "../locales/ko";
+import { en } from "@/locales/en";
+import { ko } from "@/locales/ko";
 
 export type Language = "en" | "ko";
 
@@ -15,13 +15,27 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
   undefined
 );
 
+export { LanguageContext };
+export type { LanguageContextType };
+
 const locales = {
   en,
   ko,
 };
 
-const getNestedValue = (obj: any, path: string): string => {
-  return path.split(".").reduce((current, key) => current?.[key], obj) || path;
+const getNestedValue = (obj: Record<string, unknown>, path: string): string => {
+  const keys = path.split(".");
+  let result: unknown = obj;
+
+  for (const key of keys) {
+    if (result && typeof result === "object" && key in result) {
+      result = (result as Record<string, unknown>)[key];
+    } else {
+      return path;
+    }
+  }
+
+  return typeof result === "string" ? result : path;
 };
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
@@ -39,12 +53,4 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
       {children}
     </LanguageContext.Provider>
   );
-};
-
-export const useLanguage = (): LanguageContextType => {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
-  }
-  return context;
 };

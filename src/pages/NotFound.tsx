@@ -1,12 +1,31 @@
 import { Link } from "react-router-dom";
-import { ROUTES } from "../routes/routes";
-import { useLanguage } from "../contexts/LanguageContext";
+import { ROUTES } from "@/routes/routes";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/hooks/useTheme";
+import { SunIcon, MoonIcon } from "@/components/icons";
 
 const NotFound = () => {
   const { t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-6 transition-colors duration-200">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200 flex flex-col items-center justify-center px-6">
+      {/* 테마 전환 버튼 */}
+      <div className="absolute top-6 right-6">
+        <button
+          onClick={toggleTheme}
+          className="w-12 h-12 bg-white/20 dark:bg-black/20 hover:bg-white/30 dark:hover:bg-black/30 backdrop-blur-sm rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-95"
+          aria-label={
+            theme.isDark ? t("common.switchToLight") : t("common.switchToDark")
+          }
+        >
+          {theme.isDark ? (
+            <SunIcon className="w-6 h-6 text-yellow-500" />
+          ) : (
+            <MoonIcon className="w-6 h-6 text-gray-700" />
+          )}
+        </button>
+      </div>
       <div className="text-center">
         <div className="w-32 h-32 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-8">
           <svg

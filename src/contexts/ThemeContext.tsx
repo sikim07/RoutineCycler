@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
 export type ThemeMode = "light" | "dark" | "auto";
@@ -28,6 +28,8 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+export { ThemeContext };
+
 const defaultColors: ThemeColors = {
   primary: "#3B82F6",
   secondary: "#6B7280",
@@ -49,34 +51,53 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [theme, setTheme] = useState<Theme>({
-    mode: "auto",
+    mode: "light",
     colors: defaultColors,
-    isDark: getSystemTheme(),
+    isDark: false,
   });
+
+  // CSS 변수 업데이트 함수
+  const updateCSSVariables = (isDark: boolean) => {
+    const root = document.documentElement;
+
+    if (isDark) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+  };
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e: MediaQueryListEvent) => {
       if (theme.mode === "auto") {
-        setTheme((prev) => ({ ...prev, isDark: e.matches }));
+        const newIsDark = e.matches;
+        setTheme((prev) => ({ ...prev, isDark: newIsDark }));
+        updateCSSVariables(newIsDark);
       }
     };
 
     mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [theme.mode]);
 
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme.isDark) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
+    // 초기 시스템 테마 설정 (auto 모드일 때)
+    if (theme.mode === "auto") {
+      const systemIsDark = getSystemTheme();
+      if (systemIsDark !== theme.isDark) {
+        setTheme((prev) => ({ ...prev, isDark: systemIsDark }));
+        updateCSSVariables(systemIsDark);
+      }
     }
+
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [theme.mode, theme.isDark]);
+
+  // 테마 변경 시 CSS 변수 업데이트
+  useEffect(() => {
+    updateCSSVariables(theme.isDark);
   }, [theme.isDark]);
 
   const setThemeMode = (mode: ThemeMode) => {
-    let isDark = theme.isDark;
+    let isDark: boolean;
 
     if (mode === "light") {
       isDark = false;
@@ -84,9 +105,12 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
       isDark = true;
     } else if (mode === "auto") {
       isDark = getSystemTheme();
+    } else {
+      isDark = false;
     }
 
     setTheme((prev) => ({ ...prev, mode, isDark }));
+    updateCSSVariables(isDark);
   };
 
   const setPrimaryColor = (color: string) => {
@@ -97,8 +121,12 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const toggleTheme = () => {
-    const newMode = theme.mode === "light" ? "dark" : "light";
-    setThemeMode(newMode);
+    // light와 dark 모드만 전환
+    if (theme.mode === "light") {
+      setThemeMode("dark");
+    } else {
+      setThemeMode("light");
+    }
   };
 
   return (
@@ -108,12 +136,4 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
       {children}
     </ThemeContext.Provider>
   );
-};
-
-export const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
 };
